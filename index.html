@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>DevExtreme CRUD</title>
+
+    <!-- Inclua os links para os estilos do DevExtreme -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn3.devexpress.com/jslib/21.1.5/css/dx.common.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn3.devexpress.com/jslib/21.1.5/css/dx.light.css"
+    />
+
+    <!-- Inclua os scripts do DevExtreme -->
+    <script src="https://cdn3.devexpress.com/jslib/21.1.5/js/dx.all.js"></script>
+  </head>
+  <body>
+    <div id="crud-container">
+      <div id="grid"></div>
+      <div id="crud-buttons"></div>
+    </div>
+
+    <script defer>
+      var data = [
+        { id: 1, name: 'Item 1' },
+        { id: 2, name: 'Item 2' },
+        { id: 3, name: 'Item 3' },
+      ];
+
+      var grid = new DevExpress.ui.dxDataGrid(document.getElementById('grid'), {
+        dataSource: data,
+        columns: [
+          'id',
+          'name',
+          {
+            type: 'buttons',
+            buttons: [
+              {
+                text: 'Editar',
+                onClick: function (e) {
+                  var item = e.row.data;
+                  showEditDialog(item);
+                },
+              },
+              {
+                text: 'Excluir',
+                onClick: function (e) {
+                  var item = e.row.data;
+                  deleteItem(item.id);
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+      function showEditDialog(item) {
+        var newName = prompt('Digite o novo nome:', item.name);
+        if (newName !== null) {
+          item.name = newName;
+          grid.refresh();
+        }
+      }
+
+      function deleteItem(itemId) {
+        var itemIndex = data.findIndex((item) => item.id === itemId);
+        if (itemIndex !== -1) {
+          data.splice(itemIndex, 1);
+          grid.option('dataSource', data);
+          console.log('Item excluído com sucesso.');
+        }
+      }
+
+      var addButton = new DevExpress.ui.dxButton(
+        document.getElementById('crud-buttons'),
+        {
+          text: 'Adicionar',
+          onClick: function () {
+            showAddDialog();
+          },
+        }
+      );
+
+      function showAddDialog() {
+        var newName = prompt('Digite o nome do novo item:');
+        if (newName !== null && newName !== '') {
+          var newItemId = data.length + 1; // Gere um novo ID de forma simples
+          var newItem = { id: newItemId, name: newName };
+          data.push(newItem);
+          grid.option('dataSource', data);
+          console.log('Novo item adicionado com sucesso.');
+        }
+      }
+    </script>
+  </body>
+</html>
